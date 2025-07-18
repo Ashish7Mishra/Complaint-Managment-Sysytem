@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - All Complaints</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <style>
+        .content-container { width: 100%; max-width: 1200px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .page-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e9ecef; padding-bottom: 20px; margin-bottom: 30px; }
+        .page-header h1 { margin: 0; font-size: 2em; color: #343a40; }
+        .complaints-table { width: 100%; border-collapse: collapse; }
+        .complaints-table th, .complaints-table td { border-bottom: 1px solid #dee2e6; padding: 16px; text-align: left; vertical-align: middle; }
+        .complaints-table thead th { background-color: #f8f9fa; color: #495057; font-weight: 600; border-top: 1px solid #dee2e6; }
+        .complaints-table tbody tr:hover { background-color: #f1f3f5; }
+        .status-badge { display: inline-block; padding: 6px 12px; font-size: 0.85em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 20px; color: #fff; }
+        .status-open { background-color: #007bff; }
+        .status-in-progress { background-color: #ffc107; color: #212529; }
+        .status-resolved { background-color: #28a745; }
+        .empty-state { text-align: center; padding: 60px 40px; background-color: #f8f9fa; border-radius: 8px; border: 2px dashed #dee2e6; }
+        .empty-state p { font-size: 1.1em; color: #6c757d; margin: 0; }
+        .logout-section { margin-top: 40px; text-align: center; }
+        .logout-section .btn { max-width: 200px; margin: auto; }
+    </style>
+    
+    
+    
+</head>
+<body>
+
+<div class="content-container">
+
+    <div class="page-header">
+        <h1>All System Complaints</h1>
+    </div>
+
+    <div th:if="${!complaints.isEmpty()}">
+        <table class="complaints-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Filed By (Email)</th> 
+                    <th>Status</th>
+                    <th>Date Filed</th>
+                    <th>Actions</th> 
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="c : ${complaints}">
+                    <td th:text="${c.id}">1</td>
+                    <td th:text="${c.title}">Sample Title</td>
+                    <td th:text="${c.user.email}">user@example.com</td>
+                    <td>
+                        <span class="status-badge"
+                              th:classappend="${#strings.toLowerCase(c.status) == 'open' ? 'status-open' :
+                                               (#strings.toLowerCase(c.status) == 'in progress' ? 'status-in-progress' : 'status-resolved')}"
+                              th:text="${c.status}">
+                            Open
+                        </span>
+                    </td>
+                    <td th:text="${#temporals.format(c.createdAt, 'dd-MMM-yyyy HH:mm')}">01-Jan-2024 10:30</td>
+                    <td>
+                        <!-- This link will go to the detailed view page we build next -->
+                        <a th:href="@{/admin/complaint/{id}(id=${c.id})}" class="btn">View / Edit</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Conditional rendering for the "empty" message -->
+    <div th:if="${complaints.isEmpty()}" class="empty-state">
+        <p>There are currently no complaints in the system.</p>
+    </div>
+
+    <div class="logout-section">
+         <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn">Logout</button>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

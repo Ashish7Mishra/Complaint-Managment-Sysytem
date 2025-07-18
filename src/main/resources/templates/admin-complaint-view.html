@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>View Complaint</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<style>
+.content-container {
+	max-width: 800px;
+	margin: 40px auto;
+	background: #fff;
+	padding: 40px;
+	border-radius: 12px;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.detail-grid {
+	display: grid;
+	grid-template-columns: 150px 1fr;
+	gap: 15px 20px;
+	align-items: center;
+}
+
+.detail-grid dt {
+	font-weight: bold;
+	color: #555;
+	text-align: right;
+}
+
+.detail-grid dd {
+	margin: 0;
+}
+
+.complaint-description {
+	background-color: #f8f9fa;
+	border: 1px solid #dee2e6;
+	border-radius: 8px;
+	padding: 20px;
+	margin-top: 20px;
+	white-space: pre-wrap;
+}
+
+.status-form {
+	margin-top: 30px;
+	border-top: 2px solid #e9ecef;
+	padding-top: 30px;
+}
+
+select {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+</style>
+</head>
+<body>
+
+	<div class="content-container">
+		<!-- Check if the complaint object exists before trying to display it -->
+		<div th:if="${complaint != null}">
+			<h1 th:text="'Complaint #' + ${complaint.id}">Complaint #1</h1>
+
+			<!-- The NEW, correct, and valid way -->
+			<dl class="detail-grid">
+				<dt>Title:</dt>
+				<dd th:text="${complaint.title}">Complaint Title</dd>
+
+				<dt>Filed By:</dt>
+				<dd
+					th:text="${complaint.user.name} + ' (' + ${complaint.user.email} + ')'">John
+					Doe (john@example.com)</dd>
+
+				<dt>Date Filed:</dt>
+				<dd
+					th:text="${#temporals.format(complaint.createdAt, 'dd-MMM-yyyy HH:mm')}">01-Jan-2024
+					10:30</dd>
+
+				<dt>Current Status:</dt>
+				<dd th:text="${complaint.status}">Open</dd>
+			</dl>
+
+			<div class="complaint-description">
+				<h3>Description</h3>
+				<p th:text="${complaint.description}">Full description of the
+					issue...</p>
+			</div>
+
+			<!-- Form for updating the status -->
+			<div class="status-form">
+				<h2>Update Status</h2>
+				<form th:action="@{/admin/complaint/update}" method="post">
+					<!-- Hidden input to send the complaint ID with the form -->
+					<input type="hidden" name="complaintId" th:value="${complaint.id}" />
+
+					<div class="form-group">
+						<label for="status">New Status</label> <select id="status"
+							name="status" class="form-control">
+							<option th:selected="${complaint.status == 'Open'}" value="Open">Open</option>
+							<option th:selected="${complaint.status == 'In Progress'}"
+								value="In Progress">In Progress</option>
+							<option th:selected="${complaint.status == 'Resolved'}"
+								value="Resolved">Resolved</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<button type="submit" class="btn">Update Complaint</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- Display a message if the complaint was not found -->
+		<div th:if="${complaint == null}">
+			<h1>Complaint Not Found</h1>
+			<p>The complaint you are looking for does not exist.</p>
+		</div>
+
+		<div class="form-link" style="margin-top: 20px;">
+			<a th:href="@{/admin/complaints}">Back to All Complaints</a>
+		</div>
+
+	</div>
+</body>
+</html>

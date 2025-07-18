@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security6"
+	layout:decorate="~{fragments/layout}">
+<head>
+<title>Home - Complaint Management System</title>
+</head>
+<body>
+
+	<!-- This section will replace the layout:fragment="content" in layout.html -->
+	<section layout:fragment="content">
+
+		<!--
+      This is a "Jumbotron" or "Hero" section.
+      It's a large, welcoming block to grab the user's attention.
+      - 'py-5': Bootstrap class for padding on the top and bottom (Y-axis).
+      - 'text-center': Centers all the text.
+      - 'container': A standard Bootstrap container that provides responsive margins.
+    -->
+		<div class="px-4 py-5 my-5 text-center">
+			<h1 class="display-5 fw-bold text-body-emphasis">Complaint
+				Management System</h1>
+			<div class="col-lg-6 mx-auto">
+				<p class="lead mb-4">Your one-stop solution for filing and
+					tracking community issues. Whether it's a pothole, a broken
+					streetlight, or a public safety concern, your voice matters.</p>
+
+				<!-- Conditional Buttons for Anonymous Users -->
+				<div class="d-grid gap-2 d-sm-flex justify-content-sm-center"
+					sec:authorize="isAnonymous()">
+					<a th:href="@{/register}" class="btn btn-primary btn-lg px-4 gap-3">Get
+						Started</a> <a th:href="@{/login}"
+						class="btn btn-outline-secondary btn-lg px-4">Login</a>
+				</div>
+
+				<!-- Conditional Button for Logged-In Users -->
+				<!-- This is the NEW code -->
+				<div class="d-grid gap-2 d-sm-flex justify-content-sm-center"
+					sec:authorize="hasRole('USER')">
+					<a th:href="@{/user/complaint/new}"
+						class="btn btn-success btn-lg px-4">File a New Complaint</a>
+				</div>
+			</div>
+		</div>
+
+	</section>
+
+</body>
+</html>
